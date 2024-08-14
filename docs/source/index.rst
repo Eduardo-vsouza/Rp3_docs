@@ -23,6 +23,9 @@ Contents
    quick_start
    modes
    fdr
+   output
+   contact
+   citation
 
 
 
