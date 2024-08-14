@@ -1,4 +1,4 @@
-Usage
+Quick Start
 =====
 
 .. _quick_start:
@@ -7,9 +7,9 @@ Quick Start
 ------------
 
 
-## Quick start
+1. I already have an assembled transcriptome
+----------------
 
-1. ###### I already have an assembled transcriptome
 If you already have a transcriptome, start the pipeline on the ``database`` mode and provide the path to the folder containing your GTF files with the ``--gtf_folder`` parameter (skip to step 3)
 
 2.  ###### I have RNA-Seq reads, but still need to assemble a transcriptome
@@ -20,7 +20,8 @@ Alternatively, you can just use a reference GTF file from Ensembl or NCBI, for i
 
 3. ###### Generate a custom proteomics database
 Run RP3 on the ``database`` mode
-``$ rp3.py database --outdir <path/to/output/directory> --threads 8 --genome <path/to/genome.fasta> --gtf_folder <path/to/gtf/folder> --proteome <path/to/reference_proteome.fasta``
+.. code-block:: console
+   $ rp3.py database --outdir <path/to/output/directory> --threads 8 --genome <path/to/genome.fasta> --gtf_folder <path/to/gtf/folder> --proteome <path/to/reference_proteome.fasta
 
 - The specified ``--gtf_folder`` should be the folder containing the GTF file with the transcriptome assembly. If you already have a GTF file, provide the folder containing it and other GTF files to be included in the analysis. **Provide the path to a GTF file.**
 
