@@ -22,6 +22,7 @@ Contents
    installation
    quick_start
    modes
+   fdr
 
 
 
