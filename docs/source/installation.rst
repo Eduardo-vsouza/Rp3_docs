@@ -3,6 +3,16 @@ Installation
 
 .. _installation:
 
+System requirements
+----------------
+
+The pipeline was tested on Ubuntu 22.04 LTS.
+A typical desktop with 8 cores and 16 GB RAM should be enough to run most of the analyses, although if running the workflow with these specs, it might take a long time to perform every step.
+However, if running ``search`` mode with the flag ``--hlaPeptidomics`` (Fig. 6 of Rp3 manuscript), make sure you have at least 32 or 64 GB ram
+available. This is because the already bloated proteogenomics search space gets even bigger with the addition of
+unspecific cleavage required for HLA peptidomics. This will drastically increase the complexity of the analysis.
+
+
 Install Rp3 and its dependencies
 ----------------
 

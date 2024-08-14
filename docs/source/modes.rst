@@ -19,21 +19,22 @@ Database
 3. Parameters
 	Run ``$ rp3.py database -h`` on the command line to check which commands are available. This will print out this message:
 
-```
-General Parameters:
-  database
-  --outdir OUTDIR, -o OUTDIR
-						Inform the output directory (default: foopipe)
-  --threads THREADS, -p THREADS
-						Number of threads to be used. (default: 1)
+.. code-block:: console
 
-database options:
-  --proteome PROTEOME   Reference proteome (default: None)
-  --genome GENOME
-  --gtf_folder GTF_FOLDER
-  --external_database EXTERNAL_DATABASE
-  --skip_translation
-  ```
+    General Parameters:
+      database
+      --outdir OUTDIR, -o OUTDIR
+                            Inform the output directory (default: foopipe)
+      --threads THREADS, -p THREADS
+                            Number of threads to be used. (default: 1)
+
+    database options:
+      --proteome PROTEOME   Reference proteome (default: None)
+      --genome GENOME
+      --gtf_folder GTF_FOLDER
+      --external_database EXTERNAL_DATABASE
+      --skip_translation
+
 
 
 Example code
@@ -100,207 +101,230 @@ Peptide search
                             search every raw file using every GTF file provided. (default: None)
 
 
+Folder organization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``--mzml`` flag expects the mzml folder to contain groups, such as:
 
-```
-mass_spec_folder/
-	├── group_1/
-	│   └── lc_ms-ms_1.mzML
-	├── group_2/
-	│   └── lc_ms-ms_2.mzML
-	└── group_3/
-	    └── lc_ms-ms_3.mzML
-	    └── lc_ms-ms_4.mzML
-```
-
-In case you have a single group/condition, put all the mzML files inside a folder in the ``--mzml`` directory, such as:
-
-```
-mass_spec_folder/
-	├── group_1/
-	    └── lc_ms-ms_1.mzML
-	    └── lc_ms-ms_2.mzML
-	    └── lc_ms-ms_3.mzML
-	    └── lc_ms-ms_4.mzML
-```
-
-In that case, specify the ''mass_spec_folder'' for the ``--mzml``  parameter, and **not** the group folder.
+.. code-block:: console
+    mass_spec_folder/
+        ├── group_1/
+        │   └── lc_ms-ms_1.mzML
+        ├── group_2/
+        │   └── lc_ms-ms_2.mzML
+        └── group_3/
+            └── lc_ms-ms_3.mzML
+            └── lc_ms-ms_4.mzML
 
 
-### Notes
-- The ``--groups`` parameter allows you to specify which GTF files should be used for each mzML group. This is useful in case you have a transcriptome for condition X, Y and mass spec groups for the conditions X and Y. In that case, you need to specify, for each mass spec file, the GTF group that should be used with it. Note that it should be the same name as the groups provided in the ``-gtf_folder`` parameter for the ``database`` and/or ``translation`` modes. **In case the ``--groups`` file is not provided, all databases generated from the provided GTF files will be used to search each mzML file.**
-	The groups.txt file should be organized as a tab-separated table, like:
-	files    groups
-	file_1.mzML    Y
-	file_2.mzML    X
+In case you have a single group/condition, put all the mzML files inside the ``--mzml`` directory, such as:
+
+.. code-block:: console
+
+    mass_spec_folder/
+        └── lc_ms-ms_1.mzML
+        └── lc_ms-ms_2.mzML
+        └── lc_ms-ms_3.mzML
+        └── lc_ms-ms_4.mzML
+
+
+In this case, Rp3 will automatically detect that the files come from a single group and should be searched together.
+
+
+
+Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 - Always specify the same ``--outdir`` previously used for the other modes.
-  ##### Extra parameters
+Extra parameters
 - The ``--refseq`` parameter will accept a fasta file containing a reference annotation, such as the one from NCBI RefSeq. This is used as an extra sanity check to make sure we remove all annotated microproteins, even those that might be missed by the pipeline in case the provided reference proteome (from Uniprot, for instance) is not comprehensive enough. This parameter is optional, but recommended.
 - You can also include the execution of  ``rescore`` mode following the search and post-processing with Percolator. To do so, specify the flag ``--rescore`` and provide the path to the proteome fasta file with ``--proteome``. The proteome should be the same one used to generate the database in the first step. The proteome is required if rescoring the results, but not for the first round of searches. For details, see [Post-processing](#post-processing)
 - The flag ``--MSBooster`` will generate a spectral library with predicted retention times (RT) and delta RT loess compared to the experimental data. These values will be incorporated in the ``.pin`` file used as input for post-processing with Percolator. This can either increase or reduce the number of identifications depending on the analysis, but should improve confidence.
 
 
-6. Example code
-	``$ rp3.py search --mzml /path/to/mass/spec/folder --outdir path/to/output/directory/ --threads 8 --MSBooster --rescore --proteome path/to/proteome.fasta``
+Example code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-7. Output files
+.. code-block:: console
+
+	$ rp3.py search --mzml /path/to/mass/spec/folder --outdir path/to/output/directory/ --threads 8 --MSBooster --rescore --proteome path/to/proteome.fasta
+
+Output files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	RP3 will produce output files in fasta format for each of the provided groups. Look for them inside the output directory at ``summarized_results/group_name``. Merged files from all the groups are located inside ``summarized_results/merged``.
 
 ## Post-processing
 
 1. The RP3 pipeline contains a re-scoring mode called ``rescore``. This is intended to perform a second round of searches, now using as a proteomics database the results from the first proteogenomics search (the fasta file generated by the ``search`` mode) appended to the reference proteome. This is useful because the FDR assessment from the first search is not very accurate, as the database generated from the three-frame translation of the transcriptome contains millions of predicted sequences. This bloated database results in false positives and false negatives during FDR assessment. To correct for this, we select the hits at an FDR < 0.01 from the first search and look for them again, now with a smaller database to obtain more accurate hits. This mode will reduce the final number of novel microproteins.
 2. After running the ``search`` mode, run the ``rescore`` in the same output directory:
-	``$ rp3.py rescore --outdir /path/to/output/directory --threads 8 --mzml /path/to/mzmz/files --proteome /path/to/reference/proteome --msPattern mzML
-####### Notes
+
+.. code-block:: console
+
+	$ rp3.py rescore --outdir /path/to/output/directory --threads 8 --mzml /path/to/mzmz/files --proteome /path/to/reference/proteome --msPattern mzML
+Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 - The ``--msPattern`` specifies the format of the files (usually mzML or bruker (.d) format).
 
-3. Output files
-	Look for output files in fasta and gtf format in the ``rescore/summarized_results`` directory inside the output directory.
+Output files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-## Ribocov
+Look for output files in fasta and gtf format in the ``rescore/summarized_results`` directory inside the output directory.
+
+Ribocov
+------------
 This mode will check for Ribo-Seq coverage for the microproteins identified with proteogenomics. To do so, it will run featureCounts on a custom GTF file automatically generated by the pipeline. The available parameters are:
 
-```
-General Parameters:
-  ribocov
-  --outdir OUTDIR, -o OUTDIR
-                        Inform the output directory (default: None)
-  --threads THREADS, -p THREADS
-                        Number of threads to be used. (default: 1)
+.. code-block:: console
 
-ribocov options:
-  --fastq FASTQ         Provide the path to the folder containing fastq files
-                        to be aligned to the genome. If the --aln argument is
-                        provided, this is not necessary. (default: None)
-  --gtf GTF             Reference gtf file containing coordinates for
-                        annotated genes. The novel smORFs sequences from the
-                        proteogenomics analysis will be appended to it.
-                        (default: None)
-  --genome_index GENOME_INDEX
-                        Path to the genome STAR index. If not provided, it
-                        will use the human hg19 index available at /data/
-                        (default: None)
-  --cont_index CONT_INDEX
-                        STAR index containing the contaminants (tRNA/rRNA
-                        sequences). Reads mapped to these will be excluded
-                        from the analysis. (default: None)
-  --aln ALN             Folder containing bam or sam files with Ribo-Seq reads
-                        aligned to the genome. In case this is provided,
-                        indexes are not required and the alignment step will
-                        be skipped. (default: None)
-  --rpkm RPKM           RPKM cutoff to consider whether a smORF is
-                        sufficiently covered by RPFs or not. (default: 1)
-  --multimappings MULTIMAPPINGS
-                        max number of multimappings to be allowed. (default:
-                        99)
-  --adapter ADAPTER     Provide the adapter sequence to be removed. (default:
-                        AGATCGGAAGAGCACACGTCT)
-  --plots
-  --fastx_clipper_path FASTX_CLIPPER_PATH
-  --fastx_trimmer_path FASTX_TRIMMER_PATH
+    General Parameters:
+      ribocov
+      --outdir OUTDIR, -o OUTDIR
+                            Inform the output directory (default: None)
+      --threads THREADS, -p THREADS
+                            Number of threads to be used. (default: 1)
 
-```
+    ribocov options:
+      --fastq FASTQ         Provide the path to the folder containing fastq files
+                            to be aligned to the genome. If the --aln argument is
+                            provided, this is not necessary. (default: None)
+      --gtf GTF             Reference gtf file containing coordinates for
+                            annotated genes. The novel smORFs sequences from the
+                            proteogenomics analysis will be appended to it.
+                            (default: None)
+      --genome_index GENOME_INDEX
+                            Path to the genome STAR index. If not provided, it
+                            will use the human hg19 index available at /data/
+                            (default: None)
+      --cont_index CONT_INDEX
+                            STAR index containing the contaminants (tRNA/rRNA
+                            sequences). Reads mapped to these will be excluded
+                            from the analysis. (default: None)
+      --aln ALN             Folder containing bam or sam files with Ribo-Seq reads
+                            aligned to the genome. In case this is provided,
+                            indexes are not required and the alignment step will
+                            be skipped. (default: None)
+      --rpkm RPKM           RPKM cutoff to consider whether a smORF is
+                            sufficiently covered by RPFs or not. (default: 1)
+      --multimappings MULTIMAPPINGS
+                            max number of multimappings to be allowed. (default:
+                            99)
+      --adapter ADAPTER     Provide the adapter sequence to be removed. (default:
+                            AGATCGGAAGAGCACACGTCT)
+      --plots
+      --fastx_clipper_path FASTX_CLIPPER_PATH
+      --fastx_trimmer_path FASTX_TRIMMER_PATH
+
+
 
 To run the RP3 pipeline on ribocov mode, run:
-``rp3.py --outdir path/to/output/directory --threads 8 --gtf path/to/gtf/file --fastq path/to/fastq/folder``
+
+.. code-block:: console
+    rp3.py --outdir path/to/output/directory --threads 8 --gtf path/to/gtf/file --fastq path/to/fastq/folder
+
 This will use the provided genome indexes for the human hg19 assembly located inside the STAR_indexes directory, located inside the rp3 main directory. The user can also generate new indexes if they require to do so. In that case, provide the path to them using the parameters ``--genome_index`` and ``cont_index``. Make sure to change the ``--adapter`` parameter to suit the adapter sequence used for your Ribo-Seq experiment.
 The output files will be located inside the ``counts`` directory. They will include a heatmap showing the overall Ribo-Seq coverage for the proteogenomics smORFs, as well as a table containing information about the mapping groups. If the ``--plots`` argument was specified, a plot showing the number of Ribo-Seq-covered smORFs in each mapping group will be generated at ``counts/plots``.
 
-## Annotation mode
+Annotation mode
+------------
+
 Rp3 provides an additional mode, ``anno``, to provide additional information on the identified microproteins. Running
 Rp3 with ``rp3.py anno --help`` will return:
-```commandline
- ____       _____
-|  _ \ _ __|___ /
-| |_) | '_ \ |_ \
-|  _ <| |_) |__) |
-|_| \_\ .__/____/
-      |_|
-RP3 v1.1.0
-usage: /home/microway/PycharmProjects/rp3/rp3.py anno [-h] [--outdir OUTDIR]
-                                                      [--threads THREADS]
-                                                      [--overwrite]
-                                                      [--signalP]
-                                                      [--organism ORGANISM]
-                                                      [--conservation]
-                                                      [--blast_db BLAST_DB]
-                                                      [--rescored]
-                                                      [--uniprotTable UNIPROTTABLE]
-                                                      [--orfClass]
-                                                      [--paralogy] [--mhc]
-                                                      [--repeats] [--isoforms]
-                                                      [--exclusiveMappingGroups]
-                                                      [--affinity AFFINITY]
-                                                      [--affinityPercentile AFFINITYPERCENTILE]
-                                                      [--filterPipeResults]
-                                                      [--genome GENOME]
-                                                      [--alignToTranscriptome]
-                                                      [--maxMismatches MAXMISMATCHES]
-                                                      [--gtf GTF]
-                                                      [--repeatsFile REPEATSFILE]
-                                                      [--refGTF REFGTF]
-                                                      anno
 
-Run pipeline_config in anno mode
+.. code-block:: console
 
-options:
-  -h, --help            show this help message and exit
+     ____       _____
+    |  _ \ _ __|___ /
+    | |_) | '_ \ |_ \
+    |  _ <| |_) |__) |
+    |_| \_\ .__/____/
+          |_|
+    RP3 v1.1.0
+    usage: /home/microway/PycharmProjects/rp3/rp3.py anno [-h] [--outdir OUTDIR]
+                                                          [--threads THREADS]
+                                                          [--overwrite]
+                                                          [--signalP]
+                                                          [--organism ORGANISM]
+                                                          [--conservation]
+                                                          [--blast_db BLAST_DB]
+                                                          [--rescored]
+                                                          [--uniprotTable UNIPROTTABLE]
+                                                          [--orfClass]
+                                                          [--paralogy] [--mhc]
+                                                          [--repeats] [--isoforms]
+                                                          [--exclusiveMappingGroups]
+                                                          [--affinity AFFINITY]
+                                                          [--affinityPercentile AFFINITYPERCENTILE]
+                                                          [--filterPipeResults]
+                                                          [--genome GENOME]
+                                                          [--alignToTranscriptome]
+                                                          [--maxMismatches MAXMISMATCHES]
+                                                          [--gtf GTF]
+                                                          [--repeatsFile REPEATSFILE]
+                                                          [--refGTF REFGTF]
+                                                          anno
 
-General Parameters:
-  anno
-  --outdir OUTDIR, -o OUTDIR
-                        Inform the output directory (default: None)
-  --threads THREADS, -p THREADS
-                        Number of threads to be used. (default: 1)
-  --overwrite
+    Run pipeline_config in anno mode
 
-anno options:
-  --signalP
-  --organism ORGANISM
-  --conservation
-  --blast_db BLAST_DB
-  --rescored            Use this flag if the 'rescore' mode was used to
-                        perform a second round of search using the results
-                        from the first search. Only the rescored microproteins
-                        will be analyzed for conservation in this case.
-                        (default: False)
-  --uniprotTable UNIPROTTABLE
-  --orfClass
-  --paralogy
-  --mhc
-  --repeats
-  --isoforms
-  --exclusiveMappingGroups
+    options:
+      -h, --help            show this help message and exit
 
-MHC detection parameters.:
-  --affinity AFFINITY
-  --affinityPercentile AFFINITYPERCENTILE
-  --filterPipeResults
+    General Parameters:
+      anno
+      --outdir OUTDIR, -o OUTDIR
+                            Inform the output directory (default: None)
+      --threads THREADS, -p THREADS
+                            Number of threads to be used. (default: 1)
+      --overwrite
 
-Paralogy parameters.:
-  --genome GENOME
-  --alignToTranscriptome
-  --maxMismatches MAXMISMATCHES
+    anno options:
+      --signalP
+      --organism ORGANISM
+      --conservation
+      --blast_db BLAST_DB
+      --rescored            Use this flag if the 'rescore' mode was used to
+                            perform a second round of search using the results
+                            from the first search. Only the rescored microproteins
+                            will be analyzed for conservation in this case.
+                            (default: False)
+      --uniprotTable UNIPROTTABLE
+      --orfClass
+      --paralogy
+      --mhc
+      --repeats
+      --isoforms
+      --exclusiveMappingGroups
 
-ORF Classification parameters.:
-  --gtf GTF             reference GTF file. For better accuracy in annotation,
-                        this should be a GTF file from Ensembl. They contain
-                        more terms that help better classifying the smORF.
-                        (default: None)
+    MHC detection parameters.:
+      --affinity AFFINITY
+      --affinityPercentile AFFINITYPERCENTILE
+      --filterPipeResults
 
-Repeats parameters.:
-  --repeatsFile REPEATSFILE
+    Paralogy parameters.:
+      --genome GENOME
+      --alignToTranscriptome
+      --maxMismatches MAXMISMATCHES
 
-Isoforms parameters.:
-  --refGTF REFGTF
-```
+    ORF Classification parameters.:
+      --gtf GTF             reference GTF file. For better accuracy in annotation,
+                            this should be a GTF file from Ensembl. They contain
+                            more terms that help better classifying the smORF.
+                            (default: None)
+
+    Repeats parameters.:
+      --repeatsFile REPEATSFILE
+
+    Isoforms parameters.:
+      --refGTF REFGTF
 
 With this mode, it's possible to identify signal peptides (running signalP6.0), conservation, orf classes, presence of
 MHC epitopes, and presence of paralogs in the genome. To identify signal peptides and annotate smORF classes, run Rp3
 as:
 
-```$ rp3.py anno --outdir /path/to/outdir/from/previous/modes --signalP --orfClass --gtf /path/to/ensembl/gtf```
+.. code-block:: console
+
+    $ rp3.py anno --outdir /path/to/outdir/from/previous/modes --signalP --orfClass --gtf /path/to/ensembl/gtf```
 
 To define smORF classes in the manuscript, we used the annotation from Ensembl, which we believe to be very
 comprehensive and allows us to get better insight into our data. To obtain a GTF file from the human genome
