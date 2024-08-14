@@ -71,36 +71,38 @@ Peptide search
 5. Parameters
 	Run ``$ rp3.py search -h`` at the terminal to print this message:
 
-```
-General Parameters:
-  search
-  --outdir OUTDIR, -o OUTDIR
-                        Inform the output directory (default: foopipe)
-  --threads THREADS, -p THREADS
-                        Number of threads to be used. (default: 1)
+.. code-block:: console
 
-search options:
-  --mzml MZML
-  --digest_max_length DIGEST_MAX_LENGTH
-  --digest_min_length DIGEST_MIN_LENGTH
-  --std_proteomics
-  --quantify
-  --mod MOD
-  --create_gtf
-  --cat                 Perform the search using a concatenated target and decoy database.
-                        Requires the databases to be generated using the 'cat' flag.
-                        (default: False)
-  --tmt_mod TMT_MOD
-  --fragment_mass_tolerance FRAGMENT_MASS_TOLERANCE
-  --refseq REFSEQ
-  --groups GROUPS       Tab-delimited file associating a database with a raw file. Should
-                        contain two columns: files, groups. Groups should have the same name
-                        as the generated databases. If not specified, the pipeline will
-                        search every raw file using every GTF file provided. (default: None)
+    General Parameters:
+      search
+      --outdir OUTDIR, -o OUTDIR
+                            Inform the output directory (default: foopipe)
+      --threads THREADS, -p THREADS
+                            Number of threads to be used. (default: 1)
 
-```
+    search options:
+      --mzml MZML
+      --digest_max_length DIGEST_MAX_LENGTH
+      --digest_min_length DIGEST_MIN_LENGTH
+      --std_proteomics
+      --quantify
+      --mod MOD
+      --create_gtf
+      --cat                 Perform the search using a concatenated target and decoy database.
+                            Requires the databases to be generated using the 'cat' flag.
+                            (default: False)
+      --tmt_mod TMT_MOD
+      --fragment_mass_tolerance FRAGMENT_MASS_TOLERANCE
+      --refseq REFSEQ
+      --groups GROUPS       Tab-delimited file associating a database with a raw file. Should
+                            contain two columns: files, groups. Groups should have the same name
+                            as the generated databases. If not specified, the pipeline will
+                            search every raw file using every GTF file provided. (default: None)
+
+
 
 The ``--mzml`` flag expects the mzml folder to contain groups, such as:
+
 ```
 mass_spec_folder/
 	├── group_1/
@@ -113,6 +115,7 @@ mass_spec_folder/
 ```
 
 In case you have a single group/condition, put all the mzML files inside a folder in the ``--mzml`` directory, such as:
+
 ```
 mass_spec_folder/
 	├── group_1/

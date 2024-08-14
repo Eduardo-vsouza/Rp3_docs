@@ -1,8 +1,8 @@
 """
-Lumache - Python library for cooks and food lovers.
+Rp3 - Ribosome Profiling and Proteogenomics Pipeline
 """
 
-__version__ = "0.1.0"
+__version__ = "1.1.1"
 
 
 class InvalidKindError(Exception):
