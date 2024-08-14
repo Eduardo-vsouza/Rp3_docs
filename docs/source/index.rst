@@ -20,6 +20,7 @@ Contents
 
    usage
    api
+   installation
    .. mdinclude:: installation.md
 
 
