@@ -18,10 +18,9 @@ Contents
 
 .. toctree::
 
-   usage
-   api
-   quick_start
    installation
+   quick_start
+
 
 
 
