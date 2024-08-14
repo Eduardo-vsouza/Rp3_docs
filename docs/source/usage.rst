@@ -28,6 +28,14 @@ will raise an exception.
 
 For example:
 
+>>> import Rp3
+>>> lumache.get_random_ingredients()
+['shells', 'gorgonzola', 'parsley']
+
+>>> import Rp3
+>>> lumache.get_random_ingredients()
+['shells', 'gorgonzola', 'parsley']
+
 >>> import lumache
 >>> lumache.get_random_ingredients()
 ['shells', 'gorgonzola', 'parsley']
