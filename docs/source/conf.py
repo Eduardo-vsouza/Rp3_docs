@@ -2,12 +2,12 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'Rp3'
+copyright = '2024, Eduardo Vieira de Souza'
+author = 'Eduardo Vieira de Souza'
 
-release = '0.1'
-version = '0.1.0'
+release = '1.1.1'
+version = '1.1.1'
 
 # -- General configuration
 
