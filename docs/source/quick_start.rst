@@ -51,6 +51,9 @@ Run the pipeline on ``rescore`` mode.
 Check if the proteogenomics smORFs have Ribo-Seq coverage
 ----------------
 Run the pipeline on ``ribocov`` mode.
+
+.. code-block:: console
+
    $ rp3.py ribocov --outdir /path/to/output/directory --threads 8 --fastq /path/to/fastq/folder --gtf /path/to/gtf/file --genome_index /path/to/genome/index --cont_index /path/to/contaminants/index --plots
 
 Notes
