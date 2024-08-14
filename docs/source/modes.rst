@@ -36,7 +36,9 @@ database options:
   ```
 
 
-4. Example code
+Example code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 	4.1. Generating a custom database for proteomics from a transcriptome assembly or custom GTF files
 
 	``$ rp3.py database --outdir <path/to/output/directory> --threads 8 --genome <path/to/genome.fasta> --gtf_folder <path/to/gtf/folder> --proteome <path/to/reference_proteome.fasta``
