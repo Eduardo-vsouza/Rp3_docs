@@ -20,7 +20,7 @@ Contents
 
    usage
    api
-   installation
+   quick_start
    .. mdinclude:: installation.md
 
 
