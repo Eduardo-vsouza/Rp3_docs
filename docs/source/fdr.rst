@@ -14,3 +14,8 @@ Rp3 provides a few ways to control the way we infer the FDR.
 - MSBooster may also be run after the peptide search and before the post-processing with Percolator by specifying the flag ``--MSBooster``. This will include predicted retention times to the ``.pin`` file from the search with MSFragger used as input for Percolator. This can either increase or reduce identifications, heavily dependant on the dataset. It should make the analysis more robust and we recommend it, however. Requires ``--rescore``.
 
 - If you have already run the ``search`` or ``postms`` mode, and wish to recalculate the FDR by providing a different set of arguments, you can run either mode by providing ``--recalculateFDR`` along with any desired arguments.
+
+- You can assess the FDR for all MSFragger ``.pin`` files together, or separately (1 target and 1 decoy for each sample
+ as input for Percolator). To assess everything together, run it with ``--postms_mode cat``. To analyze files separately,
+use ``--postms_mode sep``.
+
